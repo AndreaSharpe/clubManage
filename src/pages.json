@@ -1,0 +1,82 @@
+{
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			// uni-ui 规则如下配置
+			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+		}
+	},
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{ 
+			"path": "pages/login/Login",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		},
+		{
+			"path": "pages/HelloWorld",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		},
+		{
+			"path": "pages/login/numberLog",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		},
+		{
+			"path": "pages/main/notice",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		},
+		{
+			"path": "pages/Todo",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		},
+		{
+			"path": "pages/Mine",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		},
+		{
+			"path": "pages/login/fillInformation",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		}
+	],
+	"tabBar": {
+		"list": [
+		  {
+			"pagePath": "pages/main/notice",
+			"text": "社团",
+			"iconPath": "/static/images/message.png",
+			"selectedIconPath": "/static/images/messageActive.png"
+		  },
+		  {
+			"pagePath": "pages/Todo",
+			"text": "待办",
+			"iconPath": "/static/images/todo.png",
+			"selectedIconPath": "/static/images/todoActive.png"
+		  },
+		  {
+			"pagePath": "pages/Mine",
+			"text": "我的",
+			"iconPath": "/static/images/mine.png",
+			"selectedIconPath": "/static/images/mineActive.png"
+		  }
+		],
+		"selectedColor":"#1296db"
+	  },
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}
