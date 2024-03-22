@@ -1,8 +1,7 @@
 <template>
     <div class="total">
-        <div class="title">公告</div>
         <div class="body">
-            <div class="notice" v-for="item in notice">
+            <div class="notice" v-for="item in notice" v-show="postContent == 'total'">
                 <div class="dot" v-show="item.confirm == 0"></div>
                 <div class="poster">
                     <img :src="item.poster" class="photo">
@@ -41,6 +40,50 @@
 
                 </div>
                 <div :class="ifConfirm(item.confirm)" @click="confirmed(item)">{{ confirm(item.confirm) }}</div>
+
+            </div>
+            <div class="notice" v-for="item in mineNotice" v-show="postContent == 'mine'">
+                <div class="poster">
+                    <img :src="item.poster" class="photo">
+                    <p>{{ item.posterName }}</p>
+                </div>
+                <p style="margin-left: 15px;margin-bottom:5px;">最新公告：</p>
+                <div class="listBody">
+                    <div class="listLine">
+                        <img src="../../static/images/time.svg" class="icon">
+                        <div class="content" style="margin-right: 5px;">{{ item.month }}月{{
+                            item.date }}日</div>
+                        <div class="content">{{ stand(item.hour) }}:{{ stand(item.minute)
+                        }}</div>
+                    </div>
+                    <div class="listLine">
+                        <img src="../../static/images/location.svg" class="icon">
+                        <div class="content">{{ item.place }}</div>
+
+                    </div>
+                    <div class="listLine" style="padding-right: 10px;">
+                        <img src="../../static/images/list.svg" class="icon">
+                        <div class="content" style="width:300px;">{{ item.value }}</div>
+                    </div>
+                    <div class="listLine">
+                        <img src="../../static/images/head.svg" class="icon">
+                        <div class="content" style="display:flex;flex-direction:row;justify-content:center;">
+                            <p>负责人：</p>
+                            <div style="display:flex;flex-direction:row;">
+                                <p style="margin-right: 5px;font-size:12px;line-height: 20px;">{{ item.person.personName }}
+                                </p>
+                                <p style="margin-right: 5px;font-size:12px;line-height: 20px;">Tel:{{ item.person.tel }}</p>
+                                <p style="margin-right: 5px;font-size:12px;line-height: 20px;">QQ:{{ item.person.QQ }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="postBottom">
+                    <div @click="modifyPost(item)" class="postBottomButtom">修改公告</div>
+                    <div @click="deletePost(item)" class="postBottomButtom">删除公告</div>
+                </div>
+
 
             </div>
             <div v-if="popShow" class="pop">
@@ -130,9 +173,14 @@
             <div class="postNotice" @touchstart="startClickPost" @touchend="endClickPost" @click="clickPost"
                 :style="`height:${height};width:${width}`"><img src="../../static/images/add.svg"
                     :style="`height: 40px;width:40px;transform:rotate(${deg}deg);`"></div>
-
+                <div :class="`minePost ${hide}`" style="transform: translate(-92px, -572px);" @click="checkMinePost">我发布的</div>
+                <div :class="`minePost ${hide}`" style="transform: translate(-92px, -540px);" @click="checkAllPost">全部公告</div>
+                    
         </div>
+
         <div style="color:gray;margin-bottom:15px;">仅显示过去三个月的公告</div>
+        <div class="title">公告</div>
+
     </div>
 </template>
 
@@ -140,11 +188,13 @@
 <script setup>
 import { ref, watch } from 'vue'
 let notice = ref([
-    { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: "王五", value: '1.本次活动为集体活动，要提前10分钟到达集合地，不要迟到;午饭请自带，但社团亦会准备零食等之类供给大家;另交通费及晚上聚餐费用社团承担。2.因是户外活动，请自备防晒用具;游玩时注意自身安全，尽量不要走散群队。3.请自备相机摄影留念。', month: 2, date: 5, hour: 9, minute: 0, place: '文理学部桂圆操场', person: { personName: "张三", tel: "12674634", QQ: "132434645" }, confirm: 1 },
-    { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: "李四", value: '1.本次活动为集体活动，要提前10分钟到达集合地，不要迟到;午饭请自带，但社团亦会准备零食等之类供给大家;另交通费及晚上聚餐费用社团承担。2.因是户外活动，请自备防晒用具;游玩时注意自身安全，尽量不要走散群队。3.请自备相机摄影留念。', month: 3, date: 3, hour: 9, minute: 0, place: '文理学部桂圆操场', person: { personName: "张三", tel: "12674634", QQ: "132434645" }, confirm: 0 },
-    { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: "王五", value: '1.本次活动为集体活动，要提前10分钟到达集合地，不要迟到;午饭请自带，但社团亦会准备零食等之类供给大家;另交通费及晚上聚餐费用社团承担。2.因是户外活动，请自备防晒用具;游玩时注意自身安全，尽量不要走散群队。3.请自备相机摄影留念。', month: 2, date: 7, hour: 9, minute: 0, place: '文理学部桂圆操场', person: { personName: "张三", tel: "12674634", QQ: "132434645" }, confirm: 0 },
-    { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: "王五", value: '1.本次活动为集体活动，要提前10分钟到达集合地，不要迟到;午饭请自带，但社团亦会准备零食等之类供给大家;另交通费及晚上聚餐费用社团承担。2.因是户外活动，请自备防晒用具;游玩时注意自身安全，尽量不要走散群队。3.请自备相机摄影留念。', month: 2, date: 12, hour: 9, minute: 0, place: '信部操场', person: { personName: "张三", tel: "12674634", QQ: "132434645" }, confirm: 0 },
+    { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: "王五", value: '1.本次活动为集体活动，要提前10分钟到达集合地，不要迟到;午饭请自带，但社团亦会准备零食等之类供给大家;另交通费及晚上聚餐费用社团承担。2.因是户外活动，请自备防晒用具;游玩时注意自身安全，尽量不要走散群队。3.请自备相机摄影留念。', month: 2, date: 5, hour: 9, minute: 0, place: '文理学部桂圆操场', person: { personName: "王五", tel: "12674634", QQ: "132434645" }, confirm: 1 },
+    { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: "李四", value: '1.本次活动为集体活动，要提前10分钟到达集合地，不要迟到;午饭请自带，但社团亦会准备零食等之类供给大家;另交通费及晚上聚餐费用社团承担。2.因是户外活动，请自备防晒用具;游玩时注意自身安全，尽量不要走散群队。3.请自备相机摄影留念。', month: 3, date: 3, hour: 9, minute: 0, place: '文理学部桂圆操场', person: { personName: "李四", tel: "12674634", QQ: "132434645" }, confirm: 0 },
+    { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: "王五", value: '1.本次活动为集体活动，要提前10分钟到达集合地，不要迟到;午饭请自带，但社团亦会准备零食等之类供给大家;另交通费及晚上聚餐费用社团承担。2.因是户外活动，请自备防晒用具;游玩时注意自身安全，尽量不要走散群队。3.请自备相机摄影留念。', month: 2, date: 7, hour: 9, minute: 0, place: '文理学部桂圆操场', person: { personName: "王五", tel: "12674634", QQ: "132434645" }, confirm: 0 },
+    { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: "王五", value: '1.本次活动为集体活动，要提前10分钟到达集合地，不要迟到;午饭请自带，但社团亦会准备零食等之类供给大家;另交通费及晚上聚餐费用社团承担。2.因是户外活动，请自备防晒用具;游玩时注意自身安全，尽量不要走散群队。3.请自备相机摄影留念。', month: 2, date: 12, hour: 9, minute: 0, place: '信部操场', person: { personName: "王五", tel: "12674634", QQ: "132434645" }, confirm: 0 },
 ])
+
+let mineNotice = ref([{ poster: "../../static/images/QQ图片20231213202428.jpg", posterName: "李四", value: '1.本次活动为集体活动，要提前10分钟到达集合地，不要迟到;午饭请自带，但社团亦会准备零食等之类供给大家;另交通费及晚上聚餐费用社团承担。2.因是户外活动，请自备防晒用具;游玩时注意自身安全，尽量不要走散群队。3.请自备相机摄影留念。', month: 3, date: 3, hour: 9, minute: 0, place: '文理学部桂圆操场', person: { personName: "李四", tel: "12674634", QQ: "132434645" }, confirm: 0 },])
 let time, location, event, name, tel, qq
 
 function confirm(confirm_) {
@@ -212,6 +262,7 @@ function clickPost() {
         setTimeout(() => { deg.value = 45 }, 50)
         showAddNotice.value = 'showAddNotice'
         hide.value = ''
+
     }
     if (deg.value == 45) {
         deg.value = 25
@@ -230,14 +281,23 @@ function showcontents() {
 
 function postNotice() {
     let minutes
-    if(parseInt(time.split('：')[1])){
+    if (parseInt(time.split('：')[1])) {
         minutes = parseInt(time.split('：')[1])
     }
-    else if(parseInt(time.split(':')[1])){
+    else if (parseInt(time.split(':')[1])) {
         minutes = parseInt(time.split(':')[1])
 
     }
-    notice.value.splice(0, 0, { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: name, value: event, month: parseInt(time.split('.')[0]), date: parseInt(time.split('.')[1]), hour: parseInt(time.split(' ')[1]), minute: minutes, place: location, person: { personName: name, tel: tel, QQ: qq }, confirm: 0 })
+    if (!modify) {
+
+        notice.value.splice(0, 0, { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: name, value: event, month: parseInt(time.split('.')[0]), date: parseInt(time.split('.')[1]), hour: parseInt(time.split(' ')[1]), minute: minutes, place: location, person: { personName: name, tel: tel, QQ: qq }, confirm: 0 })
+    }
+    else {
+        let index = notice.value.indexOf(thisItem)
+        console.log(event)
+        notice.value.splice(index, 1, { poster: "../../static/images/QQ图片20231213202428.jpg", posterName: name, value: event, month: parseInt(time.split('.')[0]), date: parseInt(time.split('.')[1]), hour: parseInt(time.split(' ')[1]), minute: minutes, place: location, person: { personName: name, tel: tel, QQ: qq }, confirm: 0 })
+
+    }
     time = ''
     location = ''
     event = ''
@@ -246,16 +306,40 @@ function postNotice() {
     qq = ''
     clickPost()
 
+
 }
 
-watch(popShow,(newVal,oldVal)=>{
-    console.log('jjjj')
-    if(newVal==1){
-        while(addNoticeHeight.value!=500){
-            setTimeout(()=>{addNoticeHeight.value+=100},50)
-        }
-    }
-})
+let postContent = ref('total')
+function checkMinePost() {
+    postContent.value = 'mine'
+    clickPost()
+}
+function checkAllPost() {
+    postContent.value = 'total'
+    clickPost()
+}
+
+let modify = false
+let thisItem
+function modifyPost(item) {
+    thisItem = item
+    clickPost()
+    time = `${item.month}.${item.date} ${stand(item.hour)}:${stand(item.minute)}`
+    location = item.place
+    event = item.value
+    name = item.person.personName
+    console.log(name)
+    tel = item.person.tel
+    qq = item.person.QQ
+    modify = true
+    hideContent.value = ''
+}
+function deletePost(item){
+    console.log(item)
+    console.log(notice.value.indexOf(item))
+    notice.value.splice(notice.value.indexOf(item),1)
+}
+
 </script>
 
 
@@ -265,9 +349,12 @@ watch(popShow,(newVal,oldVal)=>{
     flex-direction: column;
     align-items: center;
     background-color: rgba(187, 232, 255, 0.48);
+    min-height: 100vh;
+    width: 100vw;
 }
 
 .title {
+    top:0;
     font-size: 20px;
     background-color: rgb(253, 253, 253);
     width: 100%;
@@ -279,16 +366,18 @@ watch(popShow,(newVal,oldVal)=>{
 
 }
 
-.body{
+.body {
     margin-top: 35px;
+    overflow: hidden;
 }
 
 .notice {
     border: solid 2px;
     border-color: rgb(188, 188, 188);
-    border-radius: 5px;
-    margin: 20px;
-    box-shadow: -3px 3px 2px rgb(202, 202, 202);
+    border-radius: 15px;
+    margin: 3%;
+    margin-top: 20px;
+    box-shadow: -2px 2px 2px rgb(202, 202, 202);
     background-color: rgb(255, 255, 255);
 }
 
@@ -348,7 +437,7 @@ watch(popShow,(newVal,oldVal)=>{
     justify-content: center;
     align-items: center;
     width: 54px;
-    transform: translate(280px, 0);
+    transform: translate(240px, 0);
     padding: 3px;
     border-radius: 5px;
     background-color: red;
@@ -363,7 +452,7 @@ watch(popShow,(newVal,oldVal)=>{
     justify-content: center;
     align-items: center;
     width: 54px;
-    transform: translate(280px, 0);
+    transform: translate(240px, 0);
     padding: 3px;
     border-radius: 5px;
     background-color: rgb(170, 170, 170);
@@ -420,7 +509,7 @@ watch(popShow,(newVal,oldVal)=>{
     position: fixed;
     bottom: 0;
     right: 0;
-    transform: translate(-30px, -50px);
+    transform: translate(-24px, -540px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -437,7 +526,8 @@ watch(popShow,(newVal,oldVal)=>{
     position: fixed;
     bottom: 0;
     background-color: rgb(201, 234, 255);
-    width: 100%;
+    width: 100vw;
+    right: 0;
     height: 500px;
     border-top-right-radius: 40px;
     border-top-left-radius: 40px;
@@ -450,4 +540,34 @@ watch(popShow,(newVal,oldVal)=>{
     padding-left: 30px;
     padding-right: 30px;
     color: rgb(0, 30, 140);
-}</style>
+}
+
+.minePost {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background-color: rgb(0, 115, 255);
+    color: rgb(255, 255, 255);
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.postBottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.postBottomButtom {
+    padding: 4px;
+    border-radius: 5px;
+    background-color: rgb(255, 0, 0);
+    color: rgb(255, 255, 255);
+    font-size: 12px;
+    margin-left: 55px;
+    margin-right: 55px;
+    margin-bottom: 18px;
+}
+</style>

@@ -3,7 +3,6 @@
         <div class="top">
             <img src="../static/images/home.svg" style="width: 24px;height: 24px;">
             <div>近期待办</div>
-
             <div>
                 <div v-show="ifShow">
                     <div class="selectChoice" @click="clickTotal" :style="buttonStyle1">全部</div>
@@ -14,7 +13,10 @@
         </div>
         <div style="overflow-y: scroll;max-height:470px">
             <div class="body" v-for="item in index">
-                <div class="task">
+
+                <uni-swipe-action>
+                    <uni-swipe-action-item :right-options="options" @click="onClick($event)">
+                        <div class="task">
                     <img src="../static/images/圆形未选中.svg" :class="ifChosen1[item]" @click="changeButton(item)">
                     <img src="../static/images/圆形选中.svg" :class="ifChosen2[item]" @click="changeButton(item)">
                     <div class="listBody">
@@ -45,6 +47,9 @@
 
 
                 </div>
+                    </uni-swipe-action-item>
+                </uni-swipe-action>
+                
 
             </div>
         </div>
@@ -82,7 +87,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-let list = ref([{ value: '洗鞋子', month: 2, date: 5, hour: 9, minute: 0, finish: 0, important: 'importantActive', place: '文理学部桂圆操场' }, { value: '报道', month: 2, date: 7, hour: 15, minute: 0, finish: 0, important: 'important', place: '文理学部桂圆操场' }, { value: '开学',  month: 2, date: 6, hour: 15, minute: 0, finish: 0, important: 'important', place: '文理学部桂圆操场' }, { value: '生日', month: 2, date: 4, hour: 15, minute: 0, finish: 0, important: 'important', place: '文理学部桂圆操场' }])
+let list = ref([{ value: '洗鞋子', month: 2, date: 5, hour: 9, minute: 0, finish: 0, important: 'importantActive', place: '文理学部桂圆操场' }, { value: '报道', month: 2, date: 7, hour: 15, minute: 0, finish: 0, important: 'important', place: '文理学部桂圆操场' }, { value: '开学', month: 2, date: 6, hour: 15, minute: 0, finish: 0, important: 'important', place: '文理学部桂圆操场' }, { value: '生日', month: 2, date: 4, hour: 15, minute: 0, finish: 0, important: 'important', place: '文理学部桂圆操场' }])
 let listCopy = ref([])
 let ifImportant = false
 let index = ref([])
@@ -104,6 +109,24 @@ for (let i = 0; i < list.value.length; i++) {
 let time = ref()
 let event = ref()
 let location = ref()
+
+//滑动
+let options = [{
+	            text: '删除',
+	            style: {
+	                backgroundColor: '#dd524d'
+	            }
+	        }
+	      ]
+function onClick(e){
+        for(let i = 0;i<index.value.length;i++){
+            if(index.value[i]==list.value.length-1){
+                index.value.splice(i,1)
+                list.value.splice(-1,1)
+                break
+            }
+        }
+}
 
 function stand(time_) {
     let time = ''
@@ -488,8 +511,12 @@ function submit() {
 }
 
 .submit {
-    font-size: 12px;
-    width: 25px;
+    background-color: rgb(0, 115, 255);
+    color: rgb(255, 255, 255);
+    padding: 3px;
+    border-radius: 4px;
+    font-size: 11px;
+    transform: translate(-2px,0);
 }
 
 .important {
@@ -514,4 +541,5 @@ function submit() {
     height: 16px;
 
 
-}</style>
+}
+</style>
